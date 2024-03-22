@@ -1,19 +1,3 @@
-/*
-quiz game solo coded by Jun Jaam
-contact me: https://m.me/junzjaam
-
-read line 242 to 278 if u want to  add your own question using json
-
-go to line 333 and 429 to change reward
-
-read line 393333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 if you want to customize correct or wrong answers output
-
-don't change credit please i know making this code is not hard as you think, but adding question is really a struggle 
-
-
-konti palang sa anime at country aadd ko lang pag may free time
-*/
-
 const axios = require('axios');
 
 module.exports = {
@@ -61,7 +45,7 @@ const credit = "fuсkyа";
   }     
   if (args[0].toLowerCase() === "rank") {
   try {
-    const response = await axios.get('https://api-test.yourboss12.repl.co/api/quiz/quiz/all');
+    const response = await axios.get('https://quiz-6rhj.onrender.com/api/quiz/quiz/all');
     const playerData = response.data;
     playerData.sort((a, b) => b.correct - a.correct);
     let rank = null;
@@ -92,13 +76,13 @@ const credit = "fuсkyа";
   }
   }        
 
-
+         
   if (args[0].toLowerCase() === "leaderboard") {
   try {
     const currentDate = new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Manila' });
     const currentTime = new Date().toLocaleTimeString('en-US', { timeZone: 'Asia/Manila' });
 
-    const response = await axios.get('https://api-test.yourboss12.repl.co/api/quiz/quiz/all');
+    const response = await axios.get('https://quiz-6rhj.onrender.com/api/quiz/quiz/all');
     const playerData = response.data;
     playerData.sort((a, b) => b.correct - a.correct);
     let leaderboardMessage = '│ [ 🏆 ] • Quiz Global Leaderboard \n│Quiz Started on: 7/15/2023\n│Current Date: ';
@@ -120,11 +104,11 @@ const credit = "fuсkyа";
 
     for (let i = startIndex; i < endIndex && i < playerData.length; i++) {
 
-
+      
          const player = playerData[i];
       const userData = await usersData.get(player.playerid);
       const playerName = userData.name;
-
+      
       //this is supposed to mention player in leaderboard ☹ but got no time to fix it..
       const arraytag = [
         { id: player.playerid, tag: playerName },
@@ -135,7 +119,7 @@ const credit = "fuсkyа";
         mentions: arraytag
       };
 
-
+      
       leaderboardMessage += `│Rank #${i + 1}\n│「${msg.body}」\n`;
       leaderboardMessage += `│Correct Answers: ${player.correct}\n`;
       leaderboardMessage += `│Wrong Answers: ${player.wrong}\n`;
@@ -152,11 +136,11 @@ const credit = "fuсkyа";
     return;
   }
 }
-
+        
   //for true or false questions          
     if (args[0].toLowerCase() === "torf") {
       try {
-        const response = await axios.get(`https://api-test.yourboss12.repl.co/apiv2/quiz?credit=${f}‎ ${credit}`);
+        const response = await axios.get(`https://quiz-6rhj.onrender.com/apiv2/quiz?credit=${f}‎ ${credit}`);
         const data = response.data;
         const junGod = {
           commandName,
@@ -179,7 +163,7 @@ const credit = "fuсkyа";
       }
     } else if (args[0].toLowerCase() === "anime") { //i can actually simplify this but let's just use this method
 try {
-      const response = await axios.get(`https://api-test.yourboss12.repl.co/apiv2/aniquiz?category=anime&credit=${f}‎ ${credit}`);
+      const response = await axios.get(`https://quiz-6rhj.onrender.com/apiv2/aniquiz?category=anime&credit=${f}‎ ${credit}`);
       const Qdata = response.data;
 
       if (!Qdata || !Qdata.answer) {
@@ -210,7 +194,7 @@ const txt = "please reply your answer with this character's name\n==============
     }
       } else if (args[0].toLowerCase() === "country") {
 try {
-      const response = await axios.get(`https://api-test.yourboss12.repl.co/apiv2/aniquiz?category=country&credit=${f}‎ ${credit}`);
+      const response = await axios.get(`https://quiz-6rhj.onrender.com/apiv2/aniquiz?category=country&credit=${f}‎ ${credit}`);
       const Qdata = response.data;
 
       if (!Qdata || !Qdata.answer) {
@@ -241,7 +225,7 @@ const txt = "Guess this country's name\n======================\n\n"
     }
   } else/*if */ 
       /* modify the code if you don't want to use apis question
-
+  
    const category = args[0] ? args[0].toLowerCase() : '';
   const fs = require('fs');
 
@@ -286,7 +270,7 @@ try {
       }
 //api for questions
       try {
-        const response = await axios.get(`https://api-test.yourboss12.repl.co/api/quiz/q?category=${category}&credit=${f}‎ ${credit}`);
+        const response = await axios.get(`https://quiz-6rhj.onrender.com/api/quiz/q?category=${category}&credit=${f}‎ ${credit}`);
         const Qdata = response.data;
         if (!Qdata.question) {
           return;
@@ -318,7 +302,7 @@ try {
 }
 },
 
-
+  
   onReply: async function ({ message, Reply, event, api, usersData, envCommands, commandName }) {
     const { author, messageID, answer, answered, category } = Reply;
 
@@ -330,7 +314,7 @@ try {
 
 const userData = await usersData.get(event.senderID);
 
-    const reward = 1000; //change reward here for correct answers
+    const reward = 10000; //change reward here for correct answers
 
     const id = event.senderID;
     const name = (await usersData.get(id)).name;
@@ -349,7 +333,7 @@ userData.money += reward;
 
 const playerid = event.senderID;
       const correctorwrong = 'correct';
-      const apiUrl = `https://api-test.yourboss12.repl.co/api/quiz/quiz?playerid=${playerid}&correctorwrong=${correctorwrong}`;
+      const apiUrl = `https://quiz-6rhj.onrender.com/api/quiz/quiz?playerid=${playerid}&correctorwrong=${correctorwrong}`;
       axios.get(apiUrl)
         .then(response => {
           console.log(response.data);
@@ -357,10 +341,10 @@ const playerid = event.senderID;
         .catch(error =>{
           console.log(error);
         });     
-    const response = await axios.get('https://api-test.yourboss12.repl.co/correct');
+    const response = await axios.get('https://quiz-6rhj.onrender.com/correct');
     const imCreditChanger = response.data;
 
-
+      
       const rd = Math.floor(Math.random() * imCreditChanger.length);
       const ran = imCreditChanger[rd];
 
@@ -378,7 +362,7 @@ const playerid = event.senderID;
 
 const playerid = event.senderID;
       const correctorwrong = 'wrong';
-      const apiUrl = `https://api-test.yourboss12.repl.co/api/quiz/quiz?playerid=${playerid}&correctorwrong=${correctorwrong}`;
+      const apiUrl = `https://quiz-6rhj.onrender.com/api/quiz/quiz?playerid=${playerid}&correctorwrong=${correctorwrong}`;
       axios.get(apiUrl)
         .then(response => {
           console.log(response.data);
@@ -401,8 +385,8 @@ then the correct.json will be like this
 ]
 
 */
-
-const response = await axios.get('https://api-test.yourboss12.repl.co/wrong');
+ 
+const response = await axios.get('https://quiz-6rhj.onrender.com/wrong');
     const creditt = response.data;
 
 const junn = Math.floor(Math.random() * creditt.length);
@@ -425,15 +409,14 @@ const junn = Math.floor(Math.random() * creditt.length);
 
     const userData = await usersData.get(event.userID);
 
-
-  const reward = 100
-    0;  /*
+   
+  const reward = 10000;  /*
     const rewards = ["10000", "20000", "15000", "25000"];
 const rw = Math.floor(Math.random() * rewards.length);
 const reward = rewards[rw];
 */
-
-
+    
+    
     const id = event.userID;
     const name = (await usersData.get(id)).name;
     const arraytag = [
@@ -449,7 +432,7 @@ const reward = rewards[rw];
       await usersData.set(event.userID, userData);  
 const playerid = event.userID;
       const correctorwrong = 'correct';
-      const apiUrl = `https://api-test.yourboss12.repl.co/api/quiz/quiz?playerid=${playerid}&correctorwrong=${correctorwrong}`;
+      const apiUrl = `https://quiz-6rhj.onrender.com/api/quiz/quiz?playerid=${playerid}&correctorwrong=${correctorwrong}`;
       axios.get(apiUrl)
         .then(response => {
           console.log(response.data);
@@ -457,7 +440,7 @@ const playerid = event.userID;
         .catch(error =>{
           console.log(error);
         });       
-    const response = await axios.get('https://api-test.yourboss12.repl.co/correct');
+    const response = await axios.get('https://quiz-6rhj.onrender.com/correct');
     const imCreditChanger = response.data;
 
 
@@ -474,7 +457,7 @@ const playerid = event.userID;
 //api for player data scores
 const playerid = event.userID;
       const correctorwrong = 'wrong';
-      const apiUrl = `https://api-test.yourboss12.repl.co/api/quiz/quiz?playerid=${playerid}&correctorwrong=${correctorwrong}`;
+      const apiUrl = `https://quiz-6rhj.onrender.com/api/quiz/quiz?playerid=${playerid}&correctorwrong=${correctorwrong}`;
       axios.get(apiUrl)
         .then(response => {
           console.log(response.data);
@@ -483,7 +466,7 @@ const playerid = event.userID;
           console.log(error);
         });     
       //response when wrong answr
-const response = await axios.get('https://api-test.yourboss12.repl.co/wrong');
+const response = await axios.get('https://quiz-6rhj.onrender.com/wrong');
     const creditt = response.data;
 
 const junn = Math.floor(Math.random() * creditt.length);
@@ -496,10 +479,10 @@ const junn = Math.floor(Math.random() * creditt.length);
 
       api.sendMessage(msg2, event.threadID, event.messageID);
     };
-
+  
 Reaction.fvckoff = true;
   }
 };
 function formatText(text) {
   return text.normalize("NFD").toLowerCase();
-}
+    }
