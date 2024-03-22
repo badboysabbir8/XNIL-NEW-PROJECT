@@ -3,15 +3,11 @@ const moment = require("moment-timezone");
 module.exports = {
 	config: {
 		name: "daily",
-		version: "1.0",
+		version: "1.2",
 		author: "NTKhang",
 		countDown: 5,
 		role: 0,
-		shortDescription: {
-			vi: "Nhận quà hàng ngày",
-			en: "Receive daily gift"
-		},
-		longDescription: {
+		description: {
 			vi: "Nhận quà hàng ngày",
 			en: "Receive daily gift"
 		},
@@ -80,7 +76,6 @@ module.exports = {
 		const { senderID } = event;
 
 		const userData = await usersData.get(senderID);
-		console.log(userData);
 		if (userData.data.lastTimeGetReward === dateTime)
 			return message.reply(getLang("alreadyReceived"));
 
