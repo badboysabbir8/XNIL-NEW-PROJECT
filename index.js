@@ -20,6 +20,8 @@
 const { spawn } = require("child_process");
 const log = require("./logger/log.js");
 
+
+
 function startProject() {
 	const child = spawn("node", ["Goat.js"], {
 		cwd: __dirname,
@@ -36,3 +38,13 @@ function startProject() {
 }
 
 startProject();
+const express = require('express');
+const app = express();
+const path = require('path');
+
+const port = 3002; 
+
+
+app.listen(port, () => {
+	console.log(`Server is running on http://localhost:${port}`);
+});
