@@ -47,24 +47,27 @@ function validJSON(pathDir) {
 }
 
 const { NODE_ENV } = process.env;
-const dirConfig = path.normalize(`${__dirname}/config${['production', 'development'].includes(NODE_ENV) ? '.dev.json' : '.json'}`);
-const dirConfigCommands = path.normalize(`${__dirname}/configCommands${['production', 'development'].includes(NODE_ENV) ? '.dev.json' : '.json'}`);
-const dirAccount = path.normalize(`${__dirname}/account${['production', 'development'].includes(NODE_ENV) ? '.dev.txt' : '.txt'}`);
+const configFileSuffix = NODE_ENV === 'development' ? '.dev.json' : '.json';
+const commandFileSuffix = NODE_ENV === 'development' ? '.dev.json' : '.json';
+const accountFileSuffix = NODE_ENV === 'development' ? '.dev.txt' : '.txt';
+
+const dirConfig = path.normalize(`${__dirname}/config${configFileSuffix}`);
+const dirConfigCommands = path.normalize(`${__dirname}/configCommands${commandFileSuffix}`);
+const dirAccount = path.normalize(`${__dirname}/account${accountFileSuffix}`);
 
 for (const pathDir of [dirConfig, dirConfigCommands]) {
-	try {
-		validJSON(pathDir);
-	}
-	catch (err) {
-		log.error("CONFIG", `Invalid JSON file "${pathDir.replace(__dirname, "")}":\n${err.message.split("\n").map(line => `  ${line}`).join("\n")}\nPlease fix it and restart bot`);
-		process.exit(0);
-	}
+    try {
+        validJSON(pathDir);
+    } catch (err) {
+        log.error("CONFIG", `Invalid JSON file "${pathDir.replace(__dirname, "")}":\n${err.message.split("\n").map(line => `  ${line}`).join("\n")}\nPlease fix it and restart bot`);
+        process.exit(0);
+    }
 }
+
 const config = require(dirConfig);
 if (config.whiteListMode?.whiteListIds && Array.isArray(config.whiteListMode.whiteListIds))
-	config.whiteListMode.whiteListIds = config.whiteListMode.whiteListIds.map(id => id.toString());
+    config.whiteListMode.whiteListIds = config.whiteListMode.whiteListIds.map(id => id.toString());
 const configCommands = require(dirConfigCommands);
-
 global.GoatBot = {
 	startTime: Date.now() - process.uptime() * 1000, // time start bot (ms)
 	commands: new Map(), // store all commands
