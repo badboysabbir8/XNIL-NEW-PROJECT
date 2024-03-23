@@ -1,68 +1,93 @@
-const { GoatBotApis } = global.utils;
+const axios = require('axios');
+
+const badWords = ["gay,fuck,sex,lesbian"];
+
 
 module.exports = {
-	config: {
-		name: "texttoimage",
-		aliases: ["midjourney", "openjourney", "text2image"],
-		version: "1.3",
-		author: "NTKhang",
-		countDown: 5,
-		role: 0,
-		description: {
-			uid: "Tạo ảnh từ văn bản của bạn",
-			en: "Create image from your text"
-		},
-		category: "info",
-		guide: {
-			vi: "   {pn} <prompt>: tạo ảnh từ văn bản của bạn"
-				+ "\n    Ví dụ: {pn} mdjrny-v4 create a gta style house, gta, 4k, hyper detailed, cinematic, realistic, unreal engine, cinematic lighting, bright lights"
-				+ "\n    Example: {pn} mdjrny-v4 create a gta style house, gta, 4k, hyper detailed, cinematic, realistic, unreal engine, cinematic lighting, bright lights"
-		}
-	},
 
-	langs: {
-		vi: {
-			syntaxError: "⚠️ Vui lòng nhập prompt",
-			error: "❗ Đã có lỗi xảy ra, vui lòng thử lại sau:\n%1",
-			serverError: "❗ Server đang quá tải, vui lòng thử lại sau",
-			missingGoatApiKey: "❗ Chưa cài đặt apikey cho GoatBot, vui lòng truy cập goatbot.tk để lấy apikey và cài đặt vào file configCommands.json > envGlobal.goatbotApikey và lưu lại"
-		},
-		en: {
-			syntaxError: "⚠️ Please enter prompt",
-			error: "❗ An error has occurred, please try again later:\n%1",
-			serverError: "❗ Server is overloaded, please try again later",
-			missingGoatApiKey: "❗ Not set apikey for GoatBot, please visit goatbot.tk to get apikey and set it to configCommands.json > envGlobal.goatbotApikey and save"
-		}
-	},
+  config: {
 
-	onStart: async function ({ message, args, getLang, envGlobal }) {
-		const goatBotApi = new GoatBotApis(envGlobal.goatbotApikey);
-		if (!goatBotApi.isSetApiKey())
-			return message.reply(getLang("missingGoatApiKey"));
-		const prompt = args.join(" ");
-		if (!prompt)
-			return message.reply(getLang("syntaxError"));
+    name: 'imagine',
 
-		try {
-			const { data: imageStream } = await goatBotApi.api({
-				url: "/image/mdjrny",
-				method: "GET",
-				params: {
-					prompt,
-					style_id: 28,
-					aspect_ratio: "1:1"
-				},
-				responseType: "stream"
-			});
+    version: '1.0',
 
-			imageStream.path = "image.jpg";
+    author: 'Yourmom',
 
-			return message.reply({
-				attachment: imageStream
-			});
-		}
-		catch (err) {
-			return message.reply(getLang("error", err.data?.message || err.message));
-		}
-	}
+    countDown: 0,
+
+    role: 0,
+
+    longDescription: {
+
+      en: 'Generate an image based on a prompt using Dalle.'
+
+    },
+
+    category: 'ai',
+
+   guide: {
+
+        en: '{pn} <prompt>' 
+
+      }
+
+  },
+
+  
+  onStart: async function ({ message, args }) {
+
+    try {
+
+      const info = args.join(' ');
+
+      const [prompt, model] = info.split().map(item => item.trim());
+
+      const text = args.join ("");
+
+          if (!text) {
+
+      return message.reply(" Please provide a prompt.");
+
+    }
+
+    
+      if (containsBadWords(prompt)) {
+
+        return message.reply('◻️◽▫️ | NSFW Prompt Detected');
+
+      }
+
+      
+      const apiUrl = `https://cute-tan-gorilla-yoke.cyclic.app/imagine?text=${encodeURIComponent(text)}`;
+      await message.reply(' Processing your image ');
+
+      const form = {
+
+      };
+
+      form.attachment = [];
+
+      form.attachment[0] = await global.utils.getStreamFromURL(apiUrl);
+
+      message.reply(form);
+
+    } catch (error) {
+
+      console.error(error);
+
+      await message.reply(' Sorry, API Have Skill Issue');
+
+    }
+
+  }
+
 };
+
+
+function containsBadWords(prompt) {
+
+  const promptLower = prompt.toLowerCase();
+
+  return badWords.some(badWord => promptLower.includes(badWord));
+
+}
