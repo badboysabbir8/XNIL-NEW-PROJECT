@@ -1,78 +1,70 @@
-const axios = require('axios');
-const fs = require('fs-extra');
-
+const axios = require("axios");
+const path = require("path");
+ 
+/*Do not change
+        the credit 🐢👑*/
+ 
 module.exports = {
   config: {
-    name: 'Pinterest',
+    name: "pinterest",
     aliases: ["pin"],
-    version: '1.2',
-    author: 'SiAM',
-    countDown: 50,
+    version: "1.0",
+    author: "69",
     role: 0,
-    category: 'Image Search',
-    shortDescription: {
-      en: "Search for images on Pinterest",
-    },
+    countDown: 60,
     longDescription: {
-      en: "Pinterest image search ",
-    },
+  en: "This command allows you to search for images on pinterest based on a given query and fetch a specified number of images."
+},
+    category: "Search",
     guide: {
-      en: "{pn} 'keyword' -'number of search results'\nExample: {pn} 'cats' -10\nIf no number is provided, the command will return the first 5 images.",
-    },
+      en: "{pn} <search query> <number of images>\nExample: {pn} tomozaki -5"
+    }
   },
-
-  onStart: async function ({ api, args, event , message }) {
-    const { getPrefix } = global.utils;
-       const p = getPrefix(event.threadID);
-
-
-
-
-    let keyword = args.join(' ');
-    let numberSearch = 2;
-    const match = keyword.match(/(.+?)\s*-?(\d+)?$/);
-    if (match) {
-      keyword = match[1].trim();
-      if (match[2]) {
-        numberSearch = parseInt(match[2]);
-      }
-    }
-
-    if (!keyword) {
-      api.sendMessage("Please provide a keyword.\nExample: Pinterest 'naruto' -6", event.threadID, event.messageID);
-      return;
-    }
-
-    if (numberSearch > 4) {
-      api.sendMessage("Maximum number of search results is 4.", event.threadID, event.messageID);
-      return;
-    }
-
+ 
+  onStart: async function ({ api, event, args }) {
     try {
-      const res = await axios.get(`https://api-dien.kira1011.repl.co/pinterest?search=${encodeURIComponent(keyword)}`);
-      const data = res.data.data;
-      let num = 0;
-      const img = [];
-
-      for (let i = 0; i < numberSearch; i++) {
-        const path = __dirname + `/tmp/${num += 1}.jpg`;
-        const getDown = (await axios.get(`${data[i]}`, { responseType: 'arraybuffer' })).data;
-        fs.writeFileSync(path, Buffer.from(getDown, 'utf-8'));
-        img.push(fs.createReadStream(path));
+      const fs = require("fs-extra");
+      const keySearch = args.join(" ");
+      if (!keySearch.includes("-")) {
+        return api.sendMessage(
+          "Please enter the search query and number of images (1-4)",
+          event.threadID,
+          event.messageID
+        );
       }
-
-      api.sendMessage({
-        body: ` Total IMG:${numberSearch}\nSearch Input: ${keyword}`,
-        attachment: img
+      const keySearchs = keySearch.substr(0, keySearch.indexOf('-'))
+      let numberSearch = keySearch.split("-").pop() || 9
+    if (numberSearch> 9 ){
+      numberSearch = 9
+    }
+ 
+      const apiUrl = `https://turtle-apis.onrender.com/api/pinterest?search=${encodeURIComponent(keySearchs)}&keysearch=${numberSearch}`;
+ 
+      const res = await axios.get(apiUrl);
+      const data = res.data.images;
+      const imgData = [];
+ 
+      for (let i = 0; i < Math.min(numberSearch, data.length); i++) {
+        const imgResponse = await axios.get(data[i], {
+          responseType: "arraybuffer"
+        });
+        const imgPath = path.join(__dirname, "cache", `${i + 1}.jpg`);
+        await fs.outputFile(imgPath, imgResponse.data);
+        imgData.push(fs.createReadStream(imgPath));
+      }
+ 
+      await api.sendMessage({
+        attachment: imgData,
       }, event.threadID, event.messageID);
-
-      for (let ii = 1; ii < numberSearch; ii++) {
-        fs.unlinkSync(__dirname + `/tmp/${ii}.jpg`);
-      }
-    } catch (err) {
-      console.error(err);
-      api.sendMessage("There is problem when scrape image from Pinterest.\n\nPlease try with different search input or change the spelling...!", event.threadID, event.messageID);
-      return;
+ 
+      await fs.remove(path.join(__dirname, "cache"));
+    } catch (error) {
+      console.error(error);
+      return api.sendMessage(
+        `An error occurred.`,
+        event.threadID,
+        event.messageID
+      );
     }
   }
 };
