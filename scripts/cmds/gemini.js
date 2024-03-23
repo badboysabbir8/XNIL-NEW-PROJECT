@@ -1,87 +1,149 @@
 const axios = require("axios");
-const tinyurl = require("tinyurl");
+const fs = require("fs");
+const cookie = 'g.a000gggofsT-eH4KIvq359t2PSkOCpfqw50IE922AbLD-vn8M1oZ5clc36fJT8D_mWe8eXtQEwACgYKAZgSAQASFQHGX2Mix0E7IgxI48h5sQo6YgKwjBoVAUF8yKpG8zgsWay_nGUmv-fyG61J0076';
 
 module.exports = {
   config: {
     name: "gemini",
     version: "1.0",
-    author: "Samir OE",
+    author: "69",
     countDown: 5,
     role: 0,
-    category: "google",
+    longDescription: { en: "Artificial Intelligence Google Gemini" },
+    guide: { en: "{pn} <query>" },
+    category: "ai",
   },
+  clearHistory: function () {
+    global.GoatBot.onReply.clear();
+  },
+
   onStart: async function ({ message, event, args, commandName }) {
-    try {
-      let shortLink;
+    const uid = event.senderID;
+    const prompt = args.join(" ");
 
-      if (event.type === "message_reply") {
-        if (["photo", "sticker"].includes(event.messageReply.attachments?.[0]?.type)) {
-          shortLink = await tinyurl.shorten(event.messageReply.attachments[0].url);
-        }
-      } else {
-        const text = args.join(' ');
-        const response0 = await axios.get(`https://api.samirzyx.repl.co/api/Gemini?text=${encodeURIComponent(text)}`);
-
-        if (response0.data && response0.data.candidates && response0.data.candidates.length > 0) {
-          const textContent = response0.data.candidates[0].content.parts[0].text;
-          const ans = `${textContent}`;
-          message.reply({
-            body: ans,
-          }, (err, info) => {
-            global.GoatBot.onReply.set(info.messageID, {
-              commandName,
-              messageID: info.messageID,
-              author: event.senderID,
-            });
-          });
-          return; 
-        }
-      }
-
-      if (!shortLink) {
-        console.error("Error: Invalid message or attachment type");
-        return;
-      }
-
-      const like = `https://tg.samirzyx.repl.co/telegraph?url=${encodeURIComponent(shortLink)}&senderId=784`;
-      const response4 = await axios.get(like);
-      const link = response4.data.result.link;
-
-      const text = args.join(' ');
-      const vision = `https://api.samirzyx.repl.co/api/gemini-pro?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}`;
-
-      const response1 = await axios.get(vision);
-      message.reply({
-        body: response1.data,
-      });
-    } catch (error) {
-      console.error("Error:", error.message);
+    if (!prompt) {
+      message.reply("Please enter a query.");
+      return;
     }
-  },
 
-  onReply: async function ({ message, event, Reply, args }) {
+    if (prompt.toLowerCase() === "clear") {
+      this.clearHistory();
+      const clear = await axios.get(`https://project-gemini-daac55836bf7.herokuapp.com/api/gemini?query=clear&uid=${uid}&cookie=${cookie}`);
+      message.reply(clear.data.message);
+      return;
+    }
+
+    let apiUrl = `https://project-gemini-daac55836bf7.herokuapp.com/api/gemini?query=${encodeURIComponent(prompt)}&uid=${uid}&cookie=${cookie}`;
+
+    if (event.type === "message_reply") {
+      const imageUrl = event.messageReply.attachments[0]?.url;
+      if (imageUrl) {
+        apiUrl += `&attachment=${encodeURIComponent(imageUrl)}`;
+      }
+    }
+
     try {
-      let { author, commandName } = Reply;
-      if (event.senderID !== author) return;
+      const response = await axios.get(apiUrl);
+      const result = response.data;
 
-      const gif = args.join(' ');
-      const response23 = await axios.get(`https://api.samirzyx.repl.co/api/Gemini?text=${encodeURIComponent(gif)}`);
+      let content = result.message;
+      let imageUrls = result.imageUrls;
 
-      if (response23.data && response23.data.candidates && response23.data.candidates.length > 0) {
-        const textContent = response23.data.candidates[0].content.parts[0].text;
-        const wh = `${textContent}`;
-        message.reply({
-          body: wh,
-        }, (err, info) => {
+      let replyOptions = {
+        body: content,
+      };
+
+      if (Array.isArray(imageUrls) && imageUrls.length > 0) {
+        const imageStreams = [];
+
+        if (!fs.existsSync(`${__dirname}/cache`)) {
+          fs.mkdirSync(`${__dirname}/cache`);
+        }
+
+        for (let i = 0; i < imageUrls.length; i++) {
+          const imageUrl = imageUrls[i];
+          const imagePath = `${__dirname}/cache/image` + (i + 1) + ".png";
+
+          try {
+            const imageResponse = await axios.get(imageUrl, {
+              responseType: "arraybuffer",
+            });
+            fs.writeFileSync(imagePath, imageResponse.data);
+            imageStreams.push(fs.createReadStream(imagePath));
+          } catch (error) {
+            console.error("Error occurred while downloading and saving the image:", error);
+            message.reply('An error occurred.');
+          }
+        }
+
+        replyOptions.attachment = imageStreams;
+      }
+
+      message.reply(replyOptions, (err, info) => {
+        if (!err) {
           global.GoatBot.onReply.set(info.messageID, {
             commandName,
             messageID: info.messageID,
             author: event.senderID,
           });
-        });
-      }
+        }
+      });
     } catch (error) {
-      console.error("Error:", error.message);
+      message.reply('An error occurred.');
+      console.error(error.message);
     }
   },
-};
+
+  onReply: async function ({ message, event, Reply, args }) {
+    const prompt = args.join(" ");
+    let { author, commandName, messageID } = Reply;
+    if (event.senderID !== author) return;
+
+    try {
+      const apiUrl = `https://project-gemini-daac55836bf7.herokuapp.com/api/gemini?query=${encodeURIComponent(prompt)}&uid=${author}&cookie=${cookie}`;
+      const response = await axios.get(apiUrl);
+
+      let content = response.data.message;
+      let replyOptions = {
+        body: content,
+      };
+
+      const imageUrls = response.data.imageUrls;
+      if (Array.isArray(imageUrls) && imageUrls.length > 0) {
+        const imageStreams = [];
+
+        if (!fs.existsSync(`${__dirname}/cache`)) {
+          fs.mkdirSync(`${__dirname}/cache`);
+        }
+        for (let i = 0; i < imageUrls.length; i++) {
+          const imageUrl = imageUrls[i];
+          const imagePath = `${__dirname}/cache/image` + (i + 1) + ".png";
+
+          try {
+            const imageResponse = await axios.get(imageUrl, {
+              responseType: "arraybuffer",
+            });
+            fs.writeFileSync(imagePath, imageResponse.data);
+            imageStreams.push(fs.createReadStream(imagePath));
+          } catch (error) {
+            console.error("Error occurred while downloading and saving the image:", error);
+            message.reply('An error occurred.');
+          }
+        }
+        replyOptions.attachment = imageStreams;
+      }
+      message.reply(replyOptions, (err, info) => {
+        if (!err) {
+          global.GoatBot.onReply.set(info.messageID, {
+            commandName,
+            messageID: info.messageID,
+            author: event.senderID,
+          });
+        }
+      });
+    } catch (error) {
+      console.error(error.message);
+      message.reply("An error occurred.");
+    }
+  },
+}; 
