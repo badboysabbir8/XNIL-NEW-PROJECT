@@ -27,7 +27,7 @@ module.exports = {
     }
 
     try {
-      const apiUrl = `https://api-samir.onrender.com/search/tiktok`;
+      const apiUrl = `https://apis-samir.onrender.com/search/tiktok`;
       const response = await axios.post(apiUrl, { query });
       const videos = response.data.videos;
 
