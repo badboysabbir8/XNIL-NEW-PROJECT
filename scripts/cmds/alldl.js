@@ -21,13 +21,13 @@ module.exports = {
       let BASE_URL;
 
       if (link.includes("facebook.com")) {
-        BASE_URL = `https://api-samir.onrender.com/fbdl?vid_url=${encodeURIComponent(link)}`;
+        BASE_URL = `https://apis-samir.onrender.com/fbdl?vid_url=${encodeURIComponent(link)}`;
       } else if (link.includes("twitter.com")) {
-        BASE_URL = `https://api-samir.onrender.com/twitter?url=${encodeURIComponent(link)}`;
+        BASE_URL = `https://apis-samir.onrender.com/twitter?url=${encodeURIComponent(link)}`;
       } else if (link.includes("tiktok.com")) {
-        BASE_URL = `https://api-samir.onrender.com/tiktok?url=${encodeURIComponent(link)}`;
+        BASE_URL = `https://apis-samir.onrender.com/tiktok?url=${encodeURIComponent(link)}`;
       } else if (link.includes("open.spotify.com")) {
-        BASE_URL = `https://api-samir.onrender.com/spotifydl?url=${encodeURIComponent(link)}`;
+        BASE_URL = `https://apis-samir.onrender.com/spotifydl?url=${encodeURIComponent(link)}`;
       } else if (link.includes("youtu.be") || link.includes("youtube.com")) {
         const providedURL = `https://api-samir.onrender.com/ytdl?url=${link}`;
         message.reply({
@@ -35,7 +35,7 @@ module.exports = {
         });
         return;
       } else if (link.includes("instagram.com")) {
-        BASE_URL = `https://api-samir.onrender.com/igdl?url=${encodeURIComponent(link)}`;
+        BASE_URL = `https://apis-samir.onrender.com/igdl?url=${encodeURIComponent(link)}`;
       } else {
         return message.reply(`Unsupported source.`);
       }
