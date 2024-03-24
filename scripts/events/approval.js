@@ -32,7 +32,7 @@ module.exports = {
 
     if (!threads.includes(groupId) && event.logMessageType === "log:subscribe") {
       await message.send({
-        body: `🚫 | You added the bot without permission!\n\n🌸 | Support GC - https://m.me/j/AbZvgie-nUDYbfJ_/\nor type -supportgc within 20 second ⏳\nJoin Support GC To Get Approval To Use Sakura!\n\n- ArchitectDevs`,
+        body: `🚫 | You added the bot without permission!\n\n🌸 | Support GC - https://m.me/j/AbZd6HddcyXHEFki/\nor type -supportgc within 20 second ⏳\nJoin Support GC To Get Approval To Use Sakura!\n\n- ArchitectDevs`,
         attachment: await getStreamFromURL("https://i.imgur.com/UQcCpOd.jpg")
       });
     }
