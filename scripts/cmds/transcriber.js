@@ -26,7 +26,7 @@ const onStart = async function({ event, api, message }) {
     }
 
     const link = event.messageReply.attachments[0].url;
-    const response = await axios.get(`https://api-samir.onrender.com/transcribe?url=${encodeURIComponent(link)}`);
+    const response = await axios.get(`https://apis-samir.onrender.com/transcribe?url=${encodeURIComponent(link)}`);
     const text = response.data.transcript;
 
     if (text) {
