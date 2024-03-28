@@ -1,7 +1,7 @@
 module.exports = {
   config: {
     name: "imagine",
-    aliases: [gen],
+    aliases: [],
     author: "mahim|samir api",
     version: "1.0",
     cooldowns: 5,
