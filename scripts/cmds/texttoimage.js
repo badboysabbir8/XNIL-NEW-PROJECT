@@ -7,7 +7,7 @@ module.exports = {
 
   config: {
 
-    name: 'imagine',
+    name: 'imagine2',
 
     version: '1.0',
 
