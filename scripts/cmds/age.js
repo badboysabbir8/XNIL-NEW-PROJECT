@@ -1,94 +1,50 @@
-const axios = require("axios");
-const fs = require("fs-extra");
-const path = require("path");
+const axios = require('axios');
+const fs = require('fs-extra');
 
 module.exports = {
   config: {
-    name: "age",
-    aliases: ["calculatage","birthday"],
-    version: "1.0",
-    author: "SiAM",
-    countDown: 5,
+    name: "animefy",
+    aliases: [],
+    version: "2.0",
+    author: "Arfan",
+    countDown: 2,
     role: 0,
-    shortDescription: "",
-    longDescription: "Calculate Your age ✨",
-    category: "s",
-    guide: {
-      en: "{pn} DD/MM/YYYY",
-    },
+    shortDescription: "Convert pic into anime style",
+    longDescription: "Convert a picture into anime style using the animefy-one API.",
+    category: "media",
+    guide: "{pn} [reply to image | image URL]",
   },
 
-  onStart: async function ({ api, args, message }) {
-    const x = args[0];
+  onStart: async function ({ api, event, args }) {
+    const { threadID, messageID } = event;
 
-    if (!x) {
-      message.reply("Please provide a birthdate in the format dd/mm/yyyy. 🗿");
-      return;
+    let imageUrl;
+
+    if (event.messageReply && event.messageReply.attachments[0]?.url) {
+      imageUrl = event.messageReply.attachments[0].url;
+    } else if (args[0]?.match(/^https?:\/\//)) {
+      imageUrl = args[0];
+    } else {
+      return api.sendMessage("Please reply to an image or provide an image URL.", threadID, messageID);
     }
-
-    const [day, month, year] = x.split("/");
-    const currentDate = new Date();
-
-    if (isNaN(day) || isNaN(month) || isNaN(year)) {
-      message.reply("Invalid date format. Please use dd/mm/yyyy.");
-      return;
-    }
-
-    const parsedDay = parseInt(day);
-    const parsedMonth = parseInt(month) - 1;
-    const parsedYear = parseInt(year);
-
-    if (parsedDay <= 0 || parsedDay > 31 || parsedMonth < 0 || parsedMonth > 11) {
-      message.reply("Invalid date. Please provide a valid day and month.");
-      return;
-    }
-
-    if (parsedYear >= currentDate.getFullYear()) {
-      message.reply("Invalid year. Please provide a year before the current year.");
-      return;
-    }
-
-    const siam = {
-      host: "2.56.119.93",
-      port: 5074,
-      auth: {
-        username: "rkddywvt",
-        password: "adougi3io8vn",
-      },
-      protocol: "http",
-    };
 
     try {
-      const res = await axios({
-        url: "http://goatbot.tk/api/image/age",
-        method: "GET",
-        headers: {
-          "x-api-key": "HeDOCgPYzU6JYtVYk7nxBpjMVA5448mH",
-        },
-        params: {
-          day: parsedDay.toString().padStart(2, "0"),
-          month: (parsedMonth + 1).toString().padStart(2, "0"),
-          year: parsedYear.toString(),
-        },
-        responseType: "arraybuffer",
-      });
+      const response = await axios.get(`https://animefy-one.vercel.app/draw?imgurl=${encodeURIComponent(imageUrl)}`);
+      const processedImageUrl = response.data.processedImageUrl;
 
+      const imgResponse = await axios.get(processedImageUrl, { responseType: "arraybuffer" });
+      const img = Buffer.from(imgResponse.data, 'binary');
 
-      const y = "age.jpg";
-      const file = path.join(__dirname, y);
-      fs.writeFileSync(file, res.data, "binary");
+      const pathie = __dirname + `/cache/animefy.jpg`;
+      fs.writeFileSync(pathie, img);
 
+      api.sendMessage({
+        body: "Here's your image:",
+        attachment: fs.createReadStream(pathie)
+      }, threadID, () => fs.unlinkSync(pathie), messageID);
 
-      message.reply(
-        {
-          body: "Here's the result:",
-          attachment: fs.createReadStream(file),
-        },
-        () => fs.unlinkSync(file) 
-      );
-    } catch (error) {
-      console.error("Error:", error);
-      message.reply("error ❌");
+    } catch (e) {
+      api.sendMessage(`Error occurred:\n\n${e}`, threadID, messageID);
     }
-  },
+  }
 };
