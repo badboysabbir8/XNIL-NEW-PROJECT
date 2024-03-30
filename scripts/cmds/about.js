@@ -5,7 +5,7 @@ module.exports = {
   config: {
     name: "about",
     version: "1.0",
-    author: "JARiF",
+    author: "Mahim",
     countDown: 60,
     role: 0,
     shortDescription: {
