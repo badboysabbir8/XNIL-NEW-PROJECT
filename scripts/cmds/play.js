@@ -12,6 +12,12 @@ module.exports = {
     countDown: 10,
     role: 0,
     category: "music",
+    shortDescription: {
+      en: "play an music based on user input."
+    },
+    longDescription: {
+      en: "play an music based on user input."
+    },
   },
 
   onStart: async function ({ api, event, message }) {
