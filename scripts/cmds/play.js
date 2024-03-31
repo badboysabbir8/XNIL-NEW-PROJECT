@@ -105,7 +105,7 @@ module.exports = {
             return message.reply('[ERR] The file could not be sent because it is larger than 25MB.');
           }
           const replyMessage = {
-            body: `•Title: ${video.•title}\n•Artist: ${video.author.name}`,
+            body: `•Title: ${video.title}\n•Artist: ${video.author.name}`,
             attachment: fs.createReadStream(filePath),
           };
           await api.unsendMessage(originalMessage.messageID);
