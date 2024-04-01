@@ -4,7 +4,7 @@ module.exports = {
 aliases: ["upt"],
     version: "1.0",
     author: "OtinXSandip",
-    role: 0,
+    role: 2,
     shortDescription: {
       en: "Displays the total number of users of the bot and check uptime "
     },
@@ -28,7 +28,7 @@ aliases: ["upt"],
       
       const uptimeString = `${hours}Hrs ${minutes}min ${seconds}sec`;
       
-      api.sendMessage(`⏰ | Bot running time\n☞ ${uptimeString}\n\n👪 | Total Users\n☞ ${allUsers.length}\n🌸 | Total threads\n☞ ${allThreads.length}`, event.threadID);
+      api.sendMessage(`• Bot running time\n• ${uptimeString}\n\n• Total Users\n• ${allUsers.length}\n• Total threads\n☞ ${allThreads.length}`, event.threadID);
     } catch (error) {
       console.error(error);
       api.sendMessage("An error occurred while retrieving data.", event.threadID);
