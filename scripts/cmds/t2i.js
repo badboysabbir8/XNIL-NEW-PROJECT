@@ -1,79 +1,82 @@
+  global.api = {
+  samirApi: "https://apis-samir.onrender.com"
+};
+
 const axios = require('axios');
+
 module.exports = {
   config: {
     name: "t2i",
+    aliases: ["sdi"],
+    author: "Samir Œ/ Architectdevs",
     version: "1.0",
-    author: " 69",
     countDown: 10,
-    longDescription: {
-      en: "Create four image from your text with stable diffusion dallex model same like midjourney."
-    },
-    category: "ai",
     role: 0,
+    shortDescription: "Generates an image from a text description",
+    longDescription: "Generates an image from a text description",
+    category: "ai",
     guide: {
-      en: `{pn} <prompt>`
+      en: "{pn} prompt | model \n Models:\n 1: animagineXL \n 2: dreamshaperXL\n 3: dynavisionXL \n 4: juggernautXL \n 5: realismEngineSDXL \n 6:  realvisxlV40 \n 7: sd_xl_base \n 8: inpaint \n 9:turbovisionXL",
     }
   },
- 
-  onStart: async function ({ api, event, args, message }) {
-    const permission = ["100038029237574"];
-    if (!permission.includes(event.senderID)) {
-      api.sendMessage(
-        `~Oh Baka! Seems you don't have permission to use this command!🐱`,
-        event.threadID,
-        event.messageID
-      );
-      return;
+
+  langs: {
+    en: {
+      loading: "Generating image, please wait...",
+      error: "An error occurred, please try again later"
     }
- 
-    const info = args.join(' ');
-    const [promptPart, modelPart] = info.split('|').map(item => item.trim());
- 
-    if (!promptPart) return message.reply("Add something baka.");
-    message.reply("Please wait...⏳", async (err, info) => {
-      let ui = info.messageID;
+  },
+
+  onStart: async function ({ event, message, getLang, threadsData, api, args }) {
+    const { threadID } = event;
+
+    const info = args.join(" ");
+    if (!info) {
+      return message.reply(`- baka, type your imagination!`);
+    } else {
+      const msg = info.split("|");
+      const text = msg[0];
+      const model = msg[1] || '1'; 
+      const timestamp = new Date().getTime();
+
       try {
-        const modelParam = modelPart || '9';
-        const apiUrl = `https://turtle-apis.onrender.com/api/imagine?prompt=${encodeURIComponent(promptPart)}&model=9&key=7065541c827911cbdc936f826ece5365`;
-        const response = await axios.get(apiUrl);
-        const combinedImg = response.data.combinedImage;
-        const img = response.data.imageUrls.image;
-        message.unsend(ui);
-        message.reply({
-          body: "Please reply with the image number (1, 2, 3, 4) to get the corresponding image in high resolution.",
-          attachment: await global.utils.getStreamFromURL(combinedImg)
-        }, async (err, info) => {
-          let id = info.messageID; global.GoatBot.onReply.set(info.messageID, {
-            commandName: this.config.name,
-            messageID: info.messageID,
-            author: event.senderID,
-            imageUrls: response.data.imageUrls
+        let msgSend = message.reply(getLang("loading"));
+        const { data } = await axios.get(
+          `${global.api.samirApi}/sdxl/generate?prompt=${text}&model=${model}`
+        );
+
+        const imageUrls = data.imageUrls[0];
+        const shortLink = await global.utils.uploadImgbb(imageUrls);
+        
+        let fUrl = shortLink.image.url;
+        await message.unsend((await msgSend).messageID);
+        if (imageUrls) {
+          message.reply({
+            body: `Here's your AI generated image \n prompt "${text}" \n model ${getModelName(model)}\nHD download Link: ${fUrl}`,
+            attachment: await global.utils.getStreamFromURL(imageUrls)
           });
-        });
-      } catch (error) {
-        console.error(error);
-        api.sendMessage(`${error}`, event.threadID);
+        } else {
+          throw new Error("Failed to fetch the generated image. Contact the administration group to resolve the issue. Group link: https://www.facebook.com/groups/761805065901067/?ref=share");
+        }
+      } catch (err) {
+        console.error(err);
+        return message.reply(getLang("error"));
       }
-    });
-  },
- 
-  onReply: async function ({ api, event, Reply, usersData, args, message }) {
-    const reply = parseInt(args[0]);
-    const { author, messageID, imageUrls } = Reply;
- 
-    if (event.senderID !== author) return;
- 
-    try {
-      if (reply >= 1 && reply <= 4) {
-        const img = imageUrls[`image${reply}`];
-        message.reply({ attachment: await global.utils.getStreamFromURL(img) });
-      } else {
-        message.reply("❌ | Invalid number try again later.");
-      }
-    } catch (error) {
-      console.error(error);
-      message.reply(`${error}`, event.threadID);
     }
-    await message.unsend(Reply.messageID);
-  },
+  }
 };
+
+function getModelName(model) {
+  switch (model) {
+    case '1': return "animagineXL";
+    case '2': return "dreamshaperXL";
+    case '3': return "dynavisionXL";
+    case '4': return "juggernautXL";
+    case '5': return "realismEngineSDXL";
+    case '6': return "realvisxlV40";
+    case '7': return "sd_xl_base";
+    case '8': return "inpaint";
+    case '9': return "turbovisionXL";
+    default: return "animagineXL";
+  }
+}
