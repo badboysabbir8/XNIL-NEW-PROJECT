@@ -39,11 +39,11 @@ module.exports = {
     } else if (args[0]?.match(/(https?:\/\/.*\.(?:png|jpg|jpeg))/g)) {
       imageUrl = args[0];
     } else {
-      return api.sendMessage({ body: "❌ | Reply to an image." }, event.threadID);
+      return api.sendMessage({ body: "Reply must be an image❌" }, event.threadID);
     }
 
     const url = await tinyurl.shorten(imageUrl);
-    const replyMessage = await message.reply("Please wait...⏳");
+    const replyMessage = await message.reply("Searching...⏳");
 
     try {
       const response = await axios.get(`https://turtle-apis.onrender.com/api/sauce?url=${url}`);
