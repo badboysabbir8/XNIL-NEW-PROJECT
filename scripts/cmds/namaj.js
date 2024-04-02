@@ -5,7 +5,7 @@ const moment = require('moment');
 const { getPrefix } = global.utils;
 module.exports = {
   config: {
-    name: 'SalahTime',
+    name: 'Arfan',
     version: '1.0',
     author: 'SiAM',
     countDown: 5,
