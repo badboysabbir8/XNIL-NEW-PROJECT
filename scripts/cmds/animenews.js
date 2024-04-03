@@ -6,7 +6,7 @@ module.exports = {
   config: {
     name: "Animeinfo",
     version: "1.0",
-    author: "SiAM",
+    author: "Arfan",
     countDown: 30,
     role: 0,
     shortDescription: "Get information about an anime",
