@@ -7,7 +7,7 @@ module.exports = {
     name: "unforgivable",
     aliases: ["god"],
     version: "1.0",
-    author: "Araf",
+    author: "Arafan",
     countDown: 30,
     role: 0,
     shortDescription: "",
