@@ -4,7 +4,7 @@ module.exports = {
   config: {
     name: "wordmatch",//don't change the credit//
     version: "1.2",
-    author: "Rishad",
+    author: "Arfan",
     countDown: 5,
     role: 0,
     shortDescription: {
