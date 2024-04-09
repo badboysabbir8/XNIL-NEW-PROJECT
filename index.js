@@ -44,6 +44,9 @@ const path = require('path');
 
 const port = 3002; 
 
+app.get('/', (req, res) => {
+    res.json({ message: 'bot started' });
+});
 
 app.listen(port, () => {
 	console.log(`Server is running on http://localhost:${port}`);
