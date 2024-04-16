@@ -50,7 +50,7 @@ module.exports = {
     }
 
     const { response, messageID } = await getAIResponse(input, event.senderID, event.messageID);
-    api.sendMessage(`✨|𝗦𝗮𝗸𝘂𝗿𝗮 𝗔𝗶~\n${response}`, event.threadID, messageID);
+    api.sendMessage(`✨𝗦𝗮𝗸𝘂𝗿𝗮 𝗔𝗶~\n${response}`, event.threadID, messageID);
   },
   onChat: async function ({ event, message }) {
     const messageContent = event.body.trim().toLowerCase();
