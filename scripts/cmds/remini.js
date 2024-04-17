@@ -1,12 +1,12 @@
 const a = require('axios');
-const tinyurl = require('tinyurl');
+
 
 module.exports = {
   config: {
     name: "4k",
     aliases: ["4k", "upscale"],
     version: "1.0",
-    author: "69",
+    author: "Arfan Mahim",
     countDown: 15,
     role: 0,
     longDescription: "Upscale your image.",
@@ -37,14 +37,14 @@ module.exports = {
     }
 
     try {
-      const url = await tinyurl.shorten(imageUrl);
-      const k = await a.get(`https://www.api.vyturex.com/upscale?imageUrl=${url}`);
 
-      message.reply("✅ | Please wait...");
+      const k = await a.get(`https://ts-ai-api-shuddho.onrender.com/api/upscalerv2?url=${encodeURIComponent(imageUrl)}`);
 
-      const resultUrl = k.data.resultUrl;
+      message.reply("Please wait while we upscale your image! It may take up to 10 seconds⏳);
 
-      message.reply({ body: "✅ | Image Upscaled.", attachment: await global.utils.getStreamFromURL(resultUrl) });
+      const resultUrl = k.data.upscaled_image;
+
+      message.reply({ body: "Here is your upscaled image!.", attachment: await global.utils.getStreamFromURL(resultUrl) });
     } catch (error) {
       message.reply("❌ | Error: " + error.message);
     }
