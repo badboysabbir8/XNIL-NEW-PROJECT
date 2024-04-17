@@ -4,13 +4,15 @@ let defaultCharacter = "goku";
 
 module.exports = {
   config: {
-    name: "cai",
-    version: "1.0",
-    author: "Arfan",
-    aliases: ["pretend"],
-    countDown: 10,
+    name: 'cai',
+    aliases:["pretend"],
+    version: '1.0',
+    author: 'Arfan',
     role: 0,
-    category: "Botify Ai"
+    category: 'Ai-Chat',
+    shortDescription: { en: `Botify-ai` },
+    longDescription: { en: `Botify-ai` },
+    guide: { en: '{pn} [query]' },
   },
   onStart: async function ({ message, event, args, commandName }) {
     const [question, character] = args.join(' ').split('|').map(item => item.trim());
