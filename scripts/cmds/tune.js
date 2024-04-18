@@ -11,6 +11,7 @@ module.exports = {
     aliases: ["karaoke","melody"],
     version: "1.0",
     author: "Arfan Mahim",
+    role:0,
     category: "Music",
     guide: "Instantly get separate music and voice",
   },
