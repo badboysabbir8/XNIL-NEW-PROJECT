@@ -6,6 +6,7 @@ module.exports = {
     aliases: ["i2p"],
     version: "1.0",
     author: "Arfan",
+    role:0,
     category: "Prompt",
     guide: "Converts an image to a prompt.",
   },
