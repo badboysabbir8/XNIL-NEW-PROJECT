@@ -40,7 +40,7 @@ module.exports = {
 
       const k = await a.get(`https://ts-ai-api-shuddho.onrender.com/api/upscalerv2?url=${encodeURIComponent(imageUrl)}`);
 
-      message.reply("Please wait while we upscale your image! It may take up to 10 seconds⏳);
+      message.reply("Please wait while we upscale your image! It may take up to 10 seconds⏳");
 
       const resultUrl = k.data.upscaled_image;
 
