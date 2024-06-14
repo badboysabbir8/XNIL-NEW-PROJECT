@@ -1,4 +1,4 @@
-const axios = require("axios");
+-cmd install pinterest.js const axios = require("axios");
 const fs = require("fs-extra");
 const path = require("path");
 
@@ -36,7 +36,7 @@ module.exports = {
         numberSearch = 9;
       }
 
-      const apiUrl = `https://apis-samir.onrender.com/Pinterest?query=${encodeURIComponent(keySearchs)}& number=${numberSearch}`;
+      const apiUrl = `https://samirxpikachu.onrender.com/Pinterest?query=${encodeURIComponent(keySearchs)}& number=${numberSearch}`;
 
       const res = await axios.get(apiUrl);
       const data = res.data.result;
