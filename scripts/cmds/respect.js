@@ -16,7 +16,7 @@ module.exports = {
     try {
       console.log('Sender ID:', event.senderID);
  
-      const permission = ["100038029237574","100055005600397","100048355449085"];
+      const permission = ["100004252636599","100055005600397","100048355449085"];
       if (!permission.includes(event.senderID)) {
         return api.sendMessage(
           "You Don't have sufficient permission ",
