@@ -1,9 +1,10 @@
+language = "nodejs"
+run = "npm start"
 
-
-
-language ="nodejs"
-run="npm start"
+[deployment]
+deploymentTarget = "gce"
+run = ["sh", "-c", "npm start"]
 
 [[ports]]
-localPort = 3001
+localPort = 3002
 externalPort = 80
